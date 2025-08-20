@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dự đoán Khả năng Hủy Đặt phòng Khách sạn</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <div class="card shadow p-4">
+        <h1 class="text-center mb-4">Dự đoán Khả năng Hủy Đặt phòng</h1>
+        <form action="/predict" method="post">
+          <div class="row g-3">
+            <!-- Thời gian đặt trước -->
+            <div class="col-md-6">
+              <label class="form-label">Thời gian đặt trước (ngày):</label>
+              <input
+                type="number"
+                name="lead_time"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Giá -->
+            <div class="col-md-6">
+              <label class="form-label">Giá trung bình mỗi đêm ($):</label>
+              <input
+                type="number"
+                step="0.01"
+                name="adr"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Cuối tuần -->
+            <div class="col-md-6">
+              <label class="form-label">
+                Số đêm cuối tuần:
+                <span class="tooltip-custom"
+                  >?
+                  <span class="tooltiptext"
+                    >Nhập số đêm khách ở lại vào thứ 7 hoặc Chủ nhật.</span
+                  >
+                </span>
+              </label>
+              <input
+                type="number"
+                name="stays_in_weekend_nights"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Trong tuần -->
+            <div class="col-md-6">
+              <label class="form-label">
+                Số đêm trong tuần:
+                <span class="tooltip-custom"
+                  >?
+                  <span class="tooltiptext"
+                    >Nhập số đêm khách ở lại từ thứ 2 đến thứ 6.</span
+                  >
+                </span>
+              </label>
+              <input
+                type="number"
+                name="stays_in_week_nights"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Người lớn -->
+            <div class="col-md-6">
+              <label class="form-label">Số người lớn:</label>
+              <input
+                type="number"
+                name="adults"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Trẻ em -->
+            <div class="col-md-6">
+              <label class="form-label">Số trẻ em:</label>
+              <input
+                type="number"
+                name="children"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Trẻ sơ sinh -->
+            <div class="col-md-6">
+              <label class="form-label">Số trẻ sơ sinh:</label>
+              <input
+                type="number"
+                name="babies"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Bữa ăn -->
+            <div class="col-md-6">
+              <label class="form-label">Loại bữa ăn:</label>
+              <select name="meal" class="form-select">
+                <option value="BB">Chỉ bữa sáng (BB)</option>
+                <option value="FB">Ăn 3 bữa (FB)</option>
+                <option value="HB">Ăn sáng + tối (HB)</option>
+                <option value="SC">Không bữa ăn (SC)</option>
+              </select>
+            </div>
+            <!-- Kênh đặt -->
+            <div class="col-md-6">
+              <label class="form-label">Kênh đặt phòng:</label>
+              <select name="market_segment" class="form-select">
+                <option value="Online TA">Đặt qua đại lý trực tuyến</option>
+                <option value="Direct">Đặt trực tiếp</option>
+                <option value="Corporate">Công ty / Doanh nghiệp</option>
+                <option value="Offline TA/TO">Đại lý / Công ty du lịch</option>
+              </select>
+            </div>
+            <!-- Kênh phân phối -->
+            <div class="col-md-6">
+              <label class="form-label">Kênh phân phối:</label>
+              <select name="distribution_channel" class="form-select">
+                <option value="TA/TO">Đại lý / Công ty du lịch</option>
+                <option value="Direct">Trực tiếp</option>
+                <option value="Corporate">Doanh nghiệp</option>
+              </select>
+            </div>
+            <!-- Loại phòng -->
+            <div class="col-md-6">
+              <label class="form-label">Loại phòng đặt trước:</label>
+              <select name="reserved_room_type" class="form-select" required>
+                <option value="A">Phòng loại A</option>
+                <option value="B">Phòng loại B</option>
+                <option value="C">Phòng loại C</option>
+                <option value="D">Phòng loại D</option>
+                <option value="E">Phòng loại E</option>
+                <option value="F">Phòng loại F</option>
+                <option value="G">Phòng loại G</option>
+              </select>
+            </div>
+            <!-- Đặt cọc -->
+            <div class="col-md-6">
+              <label class="form-label">Loại đặt cọc:</label>
+              <select name="deposit_type" class="form-select">
+                <option value="No Deposit">Không đặt cọc</option>
+                <option value="Non Refund">Không hoàn tiền</option>
+                <option value="Refundable">Hoàn tiền</option>
+              </select>
+            </div>
+            <!-- Khách hàng -->
+            <div class="col-md-6">
+              <label class="form-label">Loại khách hàng:</label>
+              <select name="customer_type" class="form-select">
+                <option value="Transient">Khách lẻ</option>
+                <option value="Contract">Hợp đồng</option>
+                <option value="Group">Khách đoàn</option>
+              </select>
+            </div>
+            <!-- Khách sạn -->
+            <div class="col-md-6">
+              <label class="form-label">Loại khách sạn:</label>
+              <select name="hotel" class="form-select" required>
+                <option value="City Hotel">Khách sạn thành phố</option>
+                <option value="Resort Hotel">Khách sạn nghỉ dưỡng</option>
+              </select>
+            </div>
+            <!-- Đậu xe -->
+            <div class="col-md-6">
+              <label class="form-label">Số chỗ đậu xe:</label>
+              <input
+                type="number"
+                name="required_car_parking_spaces"
+                min="0"
+                class="form-control"
+                required
+              />
+            </div>
+            <!-- Yêu cầu đặc biệt -->
+            <div class="col-md-6">
+              <label class="form-label">Số yêu cầu đặc biệt:</label>
+              <input
+                type="number"
+                name="total_of_special_requests"
+                min="0"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <!-- Nút -->
+          <div class="mt-4 text-center">
+            <button type="submit" class="btn btn-primary px-4">Dự đoán</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

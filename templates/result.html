@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kết quả Dự đoán</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styleResult.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Kết quả Dự đoán</h1>
+      <p><strong>{{ prediction }}</strong></p>
+      <p>Xác suất hủy đặt phòng: {{ probability }}%</p>
+      <a href="/">← Quay lại</a>
+    </div>
+  </body>
+</html>
